@@ -13,7 +13,7 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
 
-initial_weights = torch.tensor([0.4, 0.2, 0.3, 0.2, 0.3])
+initial_weights = torch.tensor([0.4, 0.2, 0.2, 0.2, 0.3])
 class AttentionLayer(nn.Module):
     def __init__(self, initial_weights):
         super(AttentionLayer, self).__init__()
@@ -92,7 +92,7 @@ test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
 
 # Instantiate the model, loss function, and optimizer
 input_size = 5
-hidden_size = 128
+hidden_size = 256
 output_size = 1
 learning_rate = 0.0001
 
@@ -101,7 +101,7 @@ criterion = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
 # Training the model
-num_epochs = 800
+num_epochs = 250
 train_losses = []
 val_losses = []
 for epoch in range(num_epochs):
@@ -143,7 +143,6 @@ plt.xlabel('Epochs')
 plt.ylabel('Loss')
 plt.legend()
 plt.show()
-
 # Evaluate the model
 model.eval()
 with torch.no_grad():
@@ -168,7 +167,7 @@ with torch.no_grad():
 # print(f'Linear Regression MSE: {mse_lr}')
 #
 # # Support Vector Regression
-# svr_model = SVR(kernel='rbf', C=1e3, gamma=0.1)
+# svr_model = SVR(kernel='linear', C=1e3, gamma=0.1)
 # svr_model.fit(X_train, y_train)
 # y_pred_svr = svr_model.predict(X_test)
 # mse_svr = mean_squared_error(y_test, y_pred_svr)
@@ -197,3 +196,4 @@ with torch.no_grad():
 #
 # # Show the plot
 # plt.show()
+
