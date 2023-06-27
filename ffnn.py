@@ -60,8 +60,6 @@ class ThermalComfortDataset(Dataset):
         return self.X[idx], self.y[idx]
 
 
-# define the device
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Load cleaned dataset
 df_cleaned = pd.read_csv('cleaned_asds.csv')
@@ -70,8 +68,8 @@ X = df_cleaned[['Air temperature', 'Relative humidity', 'Outdoor air temperature
 y = df_cleaned['Thermal comfort'].astype(np.float32).values
 
 # Split the dataset into training (60%), validation (20%), and testing (20%) sets
-X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.2, random_state=23) # Split 60% train, 40% temporary
-X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=23) # Split temporary set into 50% validation, 50% test
+X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.2, random_state=33) # Split 60% train, 40% temporary
+X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=33) # Split temporary set into 50% validation, 50% test
 
 # Normalize the input features
 scaler = StandardScaler()
@@ -96,12 +94,12 @@ hidden_size = 256
 output_size = 1
 learning_rate = 0.0001
 
-model = ThermalComfortModel(input_size, hidden_size, output_size, initial_weights).to(device)
+model = ThermalComfortModel(input_size, hidden_size, output_size, initial_weights)
 criterion = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
 # Training the model
-num_epochs = 250
+num_epochs = 50
 train_losses = []
 val_losses = []
 for epoch in range(num_epochs):
@@ -109,7 +107,7 @@ for epoch in range(num_epochs):
     val_loss = 0
     model.train()
     for i, (inputs, targets) in enumerate(train_loader):
-        inputs, targets = Variable(inputs).to(device), Variable(targets).to(device)
+        inputs, targets = Variable(inputs), Variable(targets)
 
         # Forward pass
         outputs = model(inputs)
@@ -126,7 +124,7 @@ for epoch in range(num_epochs):
     model.eval()
     with torch.no_grad():
         for inputs, targets in val_loader:
-            inputs, targets = Variable(inputs).to(device), Variable(targets).to(device)
+            inputs, targets = Variable(inputs), Variable(targets)
             outputs = model(inputs)
             loss = criterion(outputs, targets)
             val_loss += loss.item() * inputs.size(0)
@@ -149,7 +147,7 @@ with torch.no_grad():
     total_loss = 0
     total_samples = 0
     for inputs, targets in test_loader:
-        inputs, targets = inputs.to(device), targets.to(device)
+        inputs, targets = inputs, targets
         outputs = model(inputs)
         loss = criterion(outputs, targets)
         total_loss += loss.item() * inputs.size(0)
