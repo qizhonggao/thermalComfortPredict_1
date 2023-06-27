@@ -11,6 +11,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.svm import SVR
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.metrics import mean_squared_error
+from sklearn.ensemble import RandomForestRegressor
 import matplotlib.pyplot as plt
 
 initial_weights = torch.tensor([0.6, 0.2, 0.2, 0.1])
@@ -99,7 +100,7 @@ criterion = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
 # Training the model
-num_epochs = 90
+num_epochs = 100
 train_losses = []
 val_losses = []
 for epoch in range(num_epochs):
@@ -155,3 +156,48 @@ with torch.no_grad():
 
     mse = total_loss / total_samples
     print(f'Mean Squared Error on Test Set: {mse}')
+
+# Linear Regression
+lr_model = LinearRegression()
+lr_model.fit(X_train, y_train)
+y_pred_lr = lr_model.predict(X_test)
+mse_lr = mean_squared_error(y_test, y_pred_lr)
+print(f'Linear Regression MSE: {mse_lr}')
+
+# Support Vector Regression
+svr_model = SVR(C=1e3, gamma=0.1)
+svr_model.fit(X_train, y_train)
+y_pred_svr = svr_model.predict(X_test)
+mse_svr = mean_squared_error(y_test, y_pred_svr)
+print(f'Support Vector Regression MSE: {mse_svr}')
+
+# Decision Tree Regression
+dt_model = DecisionTreeRegressor(random_state=40)
+dt_model.fit(X_train, y_train)
+y_pred_dt = dt_model.predict(X_test)
+mse_dt = mean_squared_error(y_test, y_pred_dt)
+print(f'Decision Tree Regression MSE: {mse_dt}')
+
+# Random Forest Regression
+rf_model = RandomForestRegressor(n_estimators=100, random_state=42)
+rf_model.fit(X_train, y_train)
+y_pred_rf = rf_model.predict(X_test)
+mse_rf = mean_squared_error(y_test, y_pred_rf)
+print(f'Random Forest Regression MSE: {mse_rf}')
+
+# Neural Network MSE (already computed)
+print(f'Neural Network MSE: {mse}')
+
+# MSE values for all models
+mse_values = [mse, mse_lr, mse_svr, mse_dt, mse_rf]
+model_names = ['Our Neural Network', 'Linear Regression', 'SVM', 'Decision Tree', 'Random Forest']
+
+# Create a bar plot
+plt.bar(model_names, mse_values, width=0.3)
+plt.xlabel('Model')
+plt.ylabel('Mean Squared Error')
+plt.title('MSE Comparison of Regression Models')
+plt.xticks(rotation=10)
+
+# Show the plot
+plt.show()
