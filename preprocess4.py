@@ -23,9 +23,10 @@ condition2 = (df2_cleaned['Air temperature'] < 18) & (df2_cleaned['Thermal comfo
 
 condition3 = (df2_cleaned['Air temperature'] > 24) & (df2_cleaned['Thermal comfort'] < 3)
 
+condition4 = (df2_cleaned['Air temperature'] < 25) & (df2_cleaned['Thermal comfort'] > 5)
 
 # Combine the conditions
-combined_condition = condition1 | condition2 | condition3
+combined_condition = condition1 | condition2 | condition3 | condition4
 
 # Select the rows that don't meet the conditions
 df2_cleaned = df2_cleaned[~combined_condition]
